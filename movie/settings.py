@@ -25,12 +25,13 @@ SECRET_KEY = '2k=ci9-0r7k16g%5dh*imi@$xq(!^n(d9+pjuufi_2!+@v-ltx'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['movieproject-egyeasy.c9users.io']
+ALLOWED_HOSTS = ['movie-project-egyeasy.c9users.io']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'bootstrap4',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -38,6 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'watch',
+    'accounts',
+    'schedule',
+    'wishlist',
 ]
 
 MIDDLEWARE = [
