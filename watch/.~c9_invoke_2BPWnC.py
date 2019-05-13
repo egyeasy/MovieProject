@@ -1,18 +1,14 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-import os, requests, json
-from bs4 import BeautifulSoup
 
 # Create your views here.
-@login_required
 def index(request):
     
     return render(request, 'watch/index.html')
 
 
-@login_required
-def schedule(request):
+
     # 4. 4개 채널 편성표 크롤링
+def find_movie(query_movie):
     # python file의 위치
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     # print(table.prettify())
@@ -54,21 +50,14 @@ def schedule(request):
                         title = td.dl.dd.a.text
                         data[dayList[i]][channel][hour] = minute + ' ' + title
                 i += 1
+
     print(data)
-    context = {
-        'data': data,
-    }
-    return render(request, 'watch/schedule.html', context)
 
 
-@login_required
-def zzim_list(request, user_name):
-    
-    return render(request, 'watch/zzim_list.html')
+def zzim_list(request):
+    pass
 
 
-@login_required
 def mypage(request, user_name):
-    
-    return render(request, 'watch/mypage.html')
+    pass
     

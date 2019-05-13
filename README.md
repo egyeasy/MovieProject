@@ -23,6 +23,7 @@ pyenv local movie-venv
 pip install Django==2.1.8
 
 pip install django-bootstrap4
+pip install beautifulsoup4
 ```
 
 
@@ -36,3 +37,10 @@ pip install django-bootstrap4
 ## 190418 프로젝트 원상복구
 - 회원가입 직후 로그인 구현
 - 로그인 여부에 따라 navbar 다르게 보여주기 구현
+
+
+## 190513 텔레그램 챗봇 MVP 구현 후 웹페이지 개발 시작
+- Navbar 구성
+- 영화채널 4개에 대한 크롤링 코드 구현(소정)
+- 크롤링 코드 기반 텔레그램 영화 검색 챗봇 MVP 구현
+- 크롤링 코드 편성표 페이지에 적용(동영)

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+    {% for date, item in data.items %}
+    <p>
+        <h2>날짜 : {{ date }}</h2>
+        {% for channel, movie in item.items %}
+            <h3>{{ channel }}</h3>
+            {% for hour, each_movie in movie.items %}
+                {% if each_movie %}
+                    <div>{{ hour }}:{{ each_movie }}</div>
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+    </p>
+    {% endfor %}
+
+{% endblock %}
