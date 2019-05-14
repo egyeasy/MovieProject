@@ -2,11 +2,13 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 import os, requests, json
 from bs4 import BeautifulSoup
+from datetime import datetime
+from .models import Schedule
+
 
 # Create your views here.
 @login_required
 def index(request):
-    
     return render(request, 'watch/index.html')
 
 
@@ -55,9 +57,27 @@ def schedule(request):
                         data[dayList[i]][channel][hour] = minute + ' ' + title
                 i += 1
     print(data)
+    
+    # DB에 schedule 데이터 저장
+    if not Schedule.objects.all():
+        for date, channel_item in data.items():
+            for channel, day_item in channel_item.items():
+                for start_hour, each_movie in day_item.items():
+                    if each_movie:
+                        print("date", date, "channel", channel, "start_hour", start_hour, "each_movie", each_movie)
+                        # print(hour)
+                        # print(each_movie.split()[0])
+                        splited_each_movie = each_movie.split()
+                        start_minute = splited_each_movie[0]
+                        splited_each_movie.pop(0)
+                        title = ' '.join(splited_each_movie)
+                        this_datetime = datetime.strptime('2019 ' + ' '.join(date.split('.')) + start_hour + ' ' + start_minute, '%Y %m %d %H %M')
+                        Schedule.objects.create(title=title, channel=channel, datetime=this_datetime)
+    
     context = {
         'data': data,
     }
+    
     return render(request, 'watch/schedule.html', context)
 
 
