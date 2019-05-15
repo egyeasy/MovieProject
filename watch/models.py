@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 
 # Create your models here.
@@ -8,4 +9,24 @@ class Schedule(models.Model):
     channel = models.CharField(max_length=20)
     
     def __str__(self):
-        return f"{self.title} / {self.channel} / {self.datetime}"
+        return f"{self.id} / {self.title} / {self.channel} / {self.datetime}"
+        
+class Movie(models.Model):
+    title = models.CharField(max_length=50)
+    posterUrl = models.TextField(blank=True)
+    productionYear = models.IntegerField(null=True)
+    genre = models.CharField(max_length=50, blank=True)
+    country = models.CharField(max_length=50, blank=True)
+    runningTime = models.IntegerField(null=True)
+    # 10점만점
+    score = models.FloatField(null=True)
+    # 1.6만명, 단위가 만 명이라능
+    audience = models.CharField(max_length=20, blank=True)
+    content = models.TextField(blank=True)
+    director = models.CharField(max_length=50, blank=True)
+    follows = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='followers', blank=True)
+    
+    def __str__(self):
+        # return f"{self.id} / {self.title}"
+        return f"{self.id} / {self.title} / {self.productionYear} / {self.genre} / {self.country} / {self.runningTime} / {self.score} / {self.audience} / {self.director}"
+    

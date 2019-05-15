@@ -3,25 +3,64 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <!-- bootstrap css load -->
-  <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
-  <title>Document</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>낙낙(Knock Knock)</title>
+  <!--Bootstrap CDN-->
+    <!-- 합쳐지고 최소화된 최신 CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <!-- 부가적인 테마 -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- 합쳐지고 최소화된 최신 자바스크립트 -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+  <!-- CSS  -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="{% static 'css/materialize.css' %}" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="{% static 'css/style.css' %}" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <!--  Scripts-->
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="{% static 'js/materialize.js' %}"></script>
+  <script src="{% static 'js/init.js' %}"></script>
 </head>
 <body>
-  <!-- navbar 삽입 -->
-  {% include 'navbar.html' %}
-  
-  <div class="container">
+  <!-- Image and text -->
+  <div class="row center" style="background-color:#26a69a">
+      <form>
+          <div class="input-field">
+            <input id="search" type="search" required>
+            <label class="label-icon" for="search"><i class="material-icons">search</i></label>
+            <i class="material-icons">close</i>
+          </div>
+      </form>
+  </div>
+
   {% block body %}
   {% endblock %}
-  </div>
   
+  <nav class="white navbar-fixed-bottom navbar-mobile btn-group btn-group-justified" role="group">
+    <div class="nav-wrapper container">
+      <!-- <a id="logo-container" href="#" class="brand-logo">Logo</a> -->
+
+      <!--  right hide-on-med-and-down -->
+      <ul>
+        <li><a href="{% url 'watch:index' %}">홈</a></li>
+        <li><a href="{% url 'watch:schedule' %}">편성표</a></li>
+        <li><a href="{% url 'watch:zzim_list' user.username %}">찜</a></li>
+        <li><a href="#">마이페이지</a></li>
+      </ul>
+
+      <!-- <ul id="nav-mobile" class="sidenav">
+        <li><a href="#">Navbar Link</a></li>
+      </ul> -->
+      <!-- class="sidenav-trigger" -->
+      <!-- <a href="#" data-target="nav-mobile" ><i class="material-icons">menu</i></a> -->
+    </div>
+  </nav>
   <!-- bootstrap js load -->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
   <script src="{% static 'js/bootstrap.js' %}"></script>
-</body>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+
+  </body>
 </html>

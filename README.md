@@ -48,4 +48,6 @@ pip install beautifulsoup4
 
 ## 190514 편성표 DB 생성 및 찜하기 페이지 구현
 - Schedule migrate, 편성표 스케쥴 DB에 저장하는 기능
+- 편성표 페이지 템플릿
+- Materialize 모바일 뷰 적용
 - 
