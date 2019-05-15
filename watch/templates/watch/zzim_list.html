@@ -6,10 +6,10 @@
 <div class="row">
   {% for movie in movies %}
   {{ movie.title }}
-    {% if movie in user.follows.all %}
-      <p><a class="btn btn-primary" href="{% url 'accounts:follow' user.username %}">안볼래요</a></p>
+    {% if movie in user.followers.all %}
+      <p><a class="btn btn-primary" href="{% url 'accounts:follow' movie.id %}">안볼래요</a></p>
     {% else %}
-      <p><a class="btn btn-dark" href="{% url 'accounts:follow' user.username %}">찜하기</a></p>
+      <p><a class="btn btn-dark" href="{% url 'accounts:follow' movie.id %}">찜하기</a></p>
     {% endif %}
   {% endfor %} 
 </div>

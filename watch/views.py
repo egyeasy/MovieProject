@@ -8,7 +8,6 @@ from .models import Schedule, Movie
 
 
 # Create your views here.
-@login_required
 def index(request):
     # index 배경 이미지 랜덤 선택
     background_image_cnt = Schedule.objects.count()
@@ -16,8 +15,8 @@ def index(request):
     
     # 찜 넣기
     zzimList = []
-    if user.is_authenticated():
-        zzimList = user.follows.all()
+    if request.user.is_authenticated:
+        zzimList = request.user.follows.all()
     
     # 편성표 중 추천 영화 랜덤 선택
     schedules = Schedule.objects.all()
@@ -31,6 +30,7 @@ def index(request):
         if filter_list:
             recommend_movie = filter_list[0]
     context = {
+        'zzimList' : zzimList,
         'background_url': f'image/index/{background_num}.jpg' if background_num == 2 or background_num == 3 else f'image/index/{background_num}.png',
         'recommend_schedule': recommend_schedule,
         'recommend_movie': recommend_movie,
@@ -72,7 +72,11 @@ def mypage(request, user_name):
 
 @login_required
 def movie_detail(request, movie_id):
-    pass
+    movie = Movie.objects.get(pk=movie_id)
+    context = {
+        'movie': movie,
+    }
+    return render(request, 'watch/movie_detail.html',)
 
 
 @login_required

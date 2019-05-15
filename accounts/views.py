@@ -1,8 +1,9 @@
-from django.shortcuts import render
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import get_user_model
+from watch.models import Movie
 
 # Create your views here.
 def signup(request):
@@ -31,17 +32,17 @@ def login(request):
         form = AuthenticationForm()
         return render(request, 'accounts/login.html', {'form': form})
 
-
+@login_required
 def logout(request):
     auth_logout(request)
     return redirect('watch:index')
 
 # 'zzims/<str:user_name>/', views.zzim_list, name='zzim_list'
 @login_required
-def follow(request, user_name):
-    person = get_object_or_404(get_user_model(), username=user_name)
-    if request.movie in person.follows.all():
-        person.follows.remove(request.movie)
+def follow(request, movie_id):
+    movie = get_object_or_404(Movie, pk=movie_id)
+    if movie in request.user.followers.all():
+        request.user.followers.remove(movie)
     else:
-        person.follow.add(request.movie)
-    return redirect('watch:zzim_list', user_name)
+        request.user.followers.add(movie)
+    return redirect('watch:zzim_list', request.user.username)

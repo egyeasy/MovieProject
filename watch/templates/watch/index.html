@@ -44,9 +44,21 @@
         <div class="col s12 m4">
           <div class="icon-block">
             <h2 class="center brown-text"><i class="material-icons">flash_on</i></h2>
-            <h5 class="center">Speeds up development</h5>
-
+            {% if user.is_authenticated %}
+            <h5 class="center">찜한 영화</h5>
+              {% if zzimList == [] %}
+              <p class="light">아직 보고 싶은 영화를 등록하지 않았어요.
+              등록해서 알림 서비스를 받아보세요!:D</p>
+              {% elseif %}
+              {% zzim in zzimList %}
+                {{zzim}}
+            {% else %}
+            <h5 class="center">낙낙(Knock Knock은요)</h5></h5>
             <p class="light">We did most of the heavy lifting for you to provide a default stylings that incorporate our custom components. Additionally, we refined animations and transitions to provide a smoother experience for developers.</p>
+            </p>
+            <p>Get starated?</p>
+            <button type="button" href="{% url 'accounts:login' %}">로그인하기</button>
+            {% endif %}
           </div>
         </div>
 
@@ -91,9 +103,9 @@
         <div class="col s12 center">
           <h3><i class="mdi-content-send brown-text"></i></h3>
           <h5 class="mb-4">이 영화는 어떠세요?</h5>
-          <h5>{{ recommend_schedule.title }}</h5>
+          <a href="{% url 'watch:movie_detail' recommend_movie.id %}"><h5>{{ recommend_schedule.title }}</h5></a>
           <h6>{{ recommend_schedule.channel }} {{ recommend_datetime }}</h6>
-          <img class="rounded" src="{{ recommend_movie.posterUrl }}" alt="{{ recommend_movie.title }}" width="300">
+          <a href="{% url 'watch:movie_detail' recommend_movie.id %}"><img class="rounded" src="{{ recommend_movie.posterUrl }}" alt="{{ recommend_movie.title }}" width="300"></a>
         </div>
       </div>
 
