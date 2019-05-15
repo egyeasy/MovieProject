@@ -61,7 +61,11 @@ def index(request):
 @login_required
 def schedule(request):
     schedules = Schedule.objects.all().order_by('channel', 'datetime')
-    
+    movies = Movie.objects.all()
+    for schedule in schedules:
+        for movie in movies:
+            if schedule.title == movie.title:
+                schedule
     
     
     context = {
@@ -94,7 +98,12 @@ def movie_detail(request, movie_id):
     context = {
         'movie': movie,
     }
-    return render(request, 'watch/movie_detail.html',)
+    return render(request, 'watch/movie_detail.html', context)
+
+@login_required
+def go_to(request, movie_name):
+    movie = get_object_or_404(Movie, title=movie_name)
+    return redirect('watch:movie_detail', movie.id)
 
 
 class MovieAutocomplete(autocomplete.Select2QuerySetView):
