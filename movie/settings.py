@@ -31,6 +31,9 @@ ALLOWED_HOSTS = ['movie-project-egyeasy.c9users.io']
 # Application definition
 
 INSTALLED_APPS = [
+    'dal',
+    'dal_select2',
+    'taggit',
     'bootstrap4',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -42,6 +45,7 @@ INSTALLED_APPS = [
     'accounts',
     'schedule',
     'wishlist',
+    
 ]
 
 MIDDLEWARE = [
@@ -116,7 +120,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)

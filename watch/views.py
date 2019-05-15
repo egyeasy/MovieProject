@@ -3,20 +3,37 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 import os, requests, json, random
 from bs4 import BeautifulSoup
-from datetime import datetime
+from datetime import datetime, date
 from .models import Schedule, Movie
+from .forms import SearchForm
+from dal import autocomplete
 
 
 # Create your views here.
 def index(request):
     # index 배경 이미지 랜덤 선택
-    background_image_cnt = Schedule.objects.count()
+    background_image_cnt = 8
     background_num = random.randint(1, background_image_cnt)
     
-    # 찜 넣기
-    zzimList = []
+    # 검색어 자동완성 Form
+    form = SearchForm()
+    
+    # 찜한 영화가 스케쥴에 있는지
+    zzim_ready = []
     if request.user.is_authenticated:
-        zzimList = request.user.follows.all()
+        zzimList = request.user.followers.all()
+        today = datetime.now()
+        print(today)
+        max_date = Schedule.objects.all().order_by('-datetime')[0].datetime
+        print("max date: ", max_date)
+        #schedules = Schedule.objects.filter(datetime__range=(today, max_date))
+        schedules = Schedule.objects.filter(datetime__date__gte=today)
+        
+        for zzim in zzimList:
+            # 네이버 제목으로 바꿔
+            for schedule in schedules:
+                if zzim.title == schedule.title:
+                    zzim_ready.append([zzim.title, schedule.datetime, schedule.channel])
     
     # 편성표 중 추천 영화 랜덤 선택
     schedules = Schedule.objects.all()
@@ -30,11 +47,12 @@ def index(request):
         if filter_list:
             recommend_movie = filter_list[0]
     context = {
-        'zzimList' : zzimList,
+        'zzim_ready' : zzim_ready,
         'background_url': f'image/index/{background_num}.jpg' if background_num == 2 or background_num == 3 else f'image/index/{background_num}.png',
         'recommend_schedule': recommend_schedule,
         'recommend_movie': recommend_movie,
-        'recommend_datetime': recommend_schedule.datetime.strftime("%m/%d %a %H:%M")
+        'recommend_datetime': recommend_schedule.datetime.strftime("%m/%d %a %H:%M"),
+        'form': form,
     }
     return render(request, 'watch/index.html', context)
     
@@ -79,7 +97,29 @@ def movie_detail(request, movie_id):
     return render(request, 'watch/movie_detail.html',)
 
 
-@login_required
+class MovieAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        # Don't forget to filter out results depending on the visitor !
+        if not self.request.user.is_authenticated():
+            return Movie.objects.none()
+
+        qs = Movie.objects.all()
+
+        if self.q:
+            qs = qs.filter(name__istartswith=self.q)
+
+        return qs
+
+
+def search_movie(request):
+    query = request.POST.search
+    
+    
+    
+    return redirect('watch:index')
+
+
+
 def make_movie(request):
     failed_list = []
     # python file의 위치
@@ -176,7 +216,7 @@ def make_movie(request):
         # beautifulSoup으로 파싱한 것 인자로
         def movieInfo(searchTitle, searchMovie):
             # movieTitle, posterURL, ProductionYear, genre, country, runningTime, score, audience, content, director
-            ProductionYear = runnningTime = score = None
+            ProductionYear = runnningTime = score = 0
             movieTitle = posterURL = genre = country = audience = content = director = ''
             # 마지막에 try, except
             box = searchMovie.find("div", class_="api_subject_bx _au_movie_info")
@@ -192,13 +232,10 @@ def make_movie(request):
                         is_year = True
                         ProductionYear = int(ProductionYear[i-3:i+1])
                         break
-                if not is_year:
-                    ProductionYear = None
             except:
                  # 다음 : 쥬라기 공원 2 : 잃어버린 세계, naver : 쥬라기 공원 2 - 잃어버린 세계
                 try:
                     movieTitle = box.find("div", class_="detail_info").find("strong", class_="title").text
-                    ProductionYear = None
                 except:
                     # movieTitle, posterURL, ProductionYear, genre, country, runningTime, score, audience, content, director
                     return
@@ -224,7 +261,6 @@ def make_movie(request):
             else:
                 genre = country = ""
                 runningTime = None
-                print("genre, country, runningTime 없는 영화 : ", movieTitle)
             if ProductionYear == None:
                 try:
                     ProductionYear = int(ddPack[1][:4])

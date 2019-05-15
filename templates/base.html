@@ -46,8 +46,10 @@
       <ul>
         <li><a href="{% url 'watch:index' %}">홈</a></li>
         <li><a href="{% url 'watch:schedule' %}">편성표</a></li>
-        <li><a href="{% url 'watch:zzim_list' user.username %}">찜</a></li>
-        <li><a href="#">마이페이지</a></li>
+        {% if user.is_authenticated %}
+          <li><a href="{% url 'watch:zzim_list' user.username %}">찜</a></li>
+          <li><a href="#">마이페이지</a></li>
+        {% endif %}
       </ul>
 
       <!-- <ul id="nav-mobile" class="sidenav">

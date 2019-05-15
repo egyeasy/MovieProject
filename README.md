@@ -24,6 +24,9 @@ pip install Django==2.1.8
 
 pip install django-bootstrap4
 pip install beautifulsoup4
+# 자동완성 구현
+pip install django-taggit
+
 ```
 
 
@@ -50,4 +53,4 @@ pip install beautifulsoup4
 - Schedule migrate, 편성표 스케쥴 DB에 저장하는 기능
 - 편성표 페이지 템플릿
 - Materialize 모바일 뷰 적용
-- 
+- 검색 자동완성 구현(https://django-autocomplete-light.readthedocs.io/en/master/tutorial.html)
