@@ -1,15 +1,20 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
 import os, requests, json, random
 from bs4 import BeautifulSoup
 from datetime import datetime, date
-from .models import Schedule, Movie
-from .forms import SearchForm
+from .models import Schedule, Movie, Comment
+from .forms import SearchForm, CommentForm
 from dal import autocomplete
+from django.views.generic.edit import FormView
+from django.http import JsonResponse
+from django.core import serializers
 
 
 # Create your views here.
+@login_required
 def index(request):
     # index 배경 이미지 랜덤 선택
     background_image_cnt = 8
@@ -29,11 +34,11 @@ def index(request):
         #schedules = Schedule.objects.filter(datetime__range=(today, max_date))
         schedules = Schedule.objects.filter(datetime__date__gte=today)
         
-        for zzim in zzimList:
+        for schedule in schedules:
             # 네이버 제목으로 바꿔
-            for schedule in schedules:
+            for zzim in zzimList:
                 if zzim.title == schedule.title:
-                    zzim_ready.append([zzim.title, schedule.datetime, schedule.channel])
+                    zzim_ready.append([zzim, schedule.datetime.strftime("%m/%d %a %H:%M"), schedule.channel])
     
     # 편성표 중 추천 영화 랜덤 선택
     schedules = Schedule.objects.all()
@@ -58,47 +63,108 @@ def index(request):
     
 
 
-@login_required
 def schedule(request):
+    # 검색어 자동완성 Form
+    form = SearchForm()
+    
     schedules = Schedule.objects.all().order_by('channel', 'datetime')
-    movies = Movie.objects.all()
+    print(schedules)
+    data = {}
     for schedule in schedules:
-        for movie in movies:
-            if schedule.title == movie.title:
-                schedule
-    
-    
+        this_date = schedule.datetime.strftime("%m/%d %a")
+        data[this_date] = {'ocn':{}, 'cgv': {}, 'super_action': {}, '스크린': {}}
+    for schedule in schedules:
+        this_date = schedule.datetime.strftime("%m/%d %a")
+        this_time = schedule.datetime.strftime("%H:%M")
+        data[this_date][schedule.channel][this_time] = schedule.title
+    # print(data)
     context = {
         'schedules': schedules,
+        'data': data,
+        'json_data' : json.dumps(data),
+        'form' : form,
     }
     return render(request, 'watch/schedule.html', context)
 
 
+def search_schedule(request):
+    form = SearchForm()
+    print(request.POST)
+    channel_name = request.POST.get('channel_name')
+    print("채널", channel_name)
+    schedules = Schedule.objects.filter(channel=channel_name).order_by('channel', 'datetime')
+    data = {}
+    for schedule in schedules:
+        this_date = schedule.datetime.strftime("%m/%d %a")
+        data[this_date] = {'ocn':{}, 'cgv': {}, 'super_action': {}, '스크린': {}}
+    for schedule in schedules:
+        this_date = schedule.datetime.strftime("%m/%d %a")
+        this_time = schedule.datetime.strftime("%H:%M")
+        data[this_date][schedule.channel][this_time] = schedule.title
+    context = {
+        'search_schedules': data,
+        'channel_name': channel_name,
+        'form': form,
+    }
+    return render(request, 'watch/schedule_channel.html', context)
+
 # 'zzims/<str:user_name>/', views.zzim_list, name='zzim_list'
+# 문제점 : 찜하기 이후 페이지가 다시 rendering되면서 처음부터 스크롤을 다시 내려서 봐야 한다.
 @login_required
-def zzim_list(request, user_name):
+def zzim_list(request):
+    # 검색어 자동완성 Form
+    form = SearchForm()
+    
+    like_movies = request.user.followers.all()
     movies = Movie.objects.all()
     
     context = {
+        'like_movies' :like_movies,
         'movies' : movies,
-        # 'user_name' : user_name,
+        'form' : form,
     }
     return render(request, 'watch/zzim_list.html', context)
 
 
 @login_required
-def mypage(request, user_name):
+def mypage(request):
+    # 검색어 자동완성 Form
+    form = SearchForm()
     
-    return render(request, 'watch/mypage.html')
-
+    like_movies = request.user.followers.all()
+    context = {
+        'like_movies' :like_movies,
+        'form': form,
+    }
+    return render(request, 'watch/mypage.html', context)
 
 @login_required
 def movie_detail(request, movie_id):
+    # 검색어 자동완성 Form
+    form = SearchForm()
+    
     movie = Movie.objects.get(pk=movie_id)
+    comments = movie.movie_comments.all()
+    comment_form = CommentForm()
     context = {
+        'comment_form' : comment_form,
         'movie': movie,
+        'comments' : comments,
+        'form' : form,
     }
     return render(request, 'watch/movie_detail.html', context)
+
+@login_required
+def create_comment(request, movie_id):
+    comment_form = CommentForm(request.POST)
+    movie=Movie.objects.get(pk=movie_id)
+    if request.method == 'POST':
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.created_by = request.user
+            comment.movie_id = movie.id
+            comment.save()
+    return redirect('watch:movie_detail', movie.id)
 
 @login_required
 def go_to(request, movie_name):
@@ -109,24 +175,32 @@ def go_to(request, movie_name):
 class MovieAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         # Don't forget to filter out results depending on the visitor !
-        if not self.request.user.is_authenticated():
-            return Movie.objects.none()
-
+        # if not self.request.user.is_authenticated():
+        #     return Movie.objects.none()
         qs = Movie.objects.all()
-
         if self.q:
-            qs = qs.filter(name__istartswith=self.q)
-
+            qs = qs.filter(title__istartswith=self.q)
         return qs
 
 
 def search_movie(request):
-    query = request.POST.search
+    # query = request.POST.form_search
+    # query = request.
+    movie = get_object_or_404(Movie, pk=request.POST.get('content'))
     
+    return redirect('watch:movie_detail', movie.id)
     
-    
-    return redirect('watch:index')
 
+
+# Search FormVIew
+# class SearchView(FormView):
+#     template_name = 'base.html'
+#     form_class = UserCreationForm
+#     success_url = ''
+    
+#     def form_valid(self, form):
+#         print(form.data['content'])
+#         return super().form_valid(form)
 
 
 def make_movie(request):
@@ -269,16 +343,16 @@ def make_movie(request):
                 runningTime = int(info[2][:len(info[2])-1])
             else:
                 genre = country = ""
-                runningTime = None
-            if ProductionYear == None:
+                runningTime = 0
+            if ProductionYear == 0:
                 try:
                     ProductionYear = int(ddPack[1][:4])
                 except:
-                    ProductionYear = None
+                    ProductionYear = 0
             try:
-                score = float(ddPack[2].find("span", class_="star_count").text)
+                score = float(unboxing.find("span", class_="star_count").text)
             except:
-                score = None
+                score = 0
             # 쥬라기 공원에 관객 수 없었어, 원래 0번째부터 있을 때 3번째에 있었는데
             # 별달리 특정할 수 있는 class가 없어서 이렇게 해본다.
             if len(ddPack) == 5: # 관객 수 있을 때

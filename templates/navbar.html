@@ -8,14 +8,12 @@
       <li class="nav-item">
         <a class="nav-link" href="{% url 'watch:schedule' %}">편성표</a>
       </li>
-      {% if user.is_authenticated %}
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'watch:zzim_list' user.username %}">찜</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'watch:mypage' user.username %}">마이페이지</a>
-        </li>
-      {% endif %}
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'watch:zzim_list' %}">찜</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'watch:mypage' %}">마이페이지</a>
+      </li>
     </ul>
     <ul class="navbar-nav ml-auto">
       {% if user.is_authenticated %}

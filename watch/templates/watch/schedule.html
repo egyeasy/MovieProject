@@ -1,21 +1,156 @@
 {% extends 'base.html' %}
+{% load staticfiles %}
+{% load static %}
+{% load bootstrap4 %}
+
+{% block head %}
+<link href="{% static 'css/search_bar.css'%}" rel='stylesheet'>
+<!-- Vue -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+{% endblock %}
 
 {% block body %}
-    {%  for schedule in schedules %}
-        <p>{{ schedule }}</p>
-    {% endfor %}
-    <!--{% for date, item in data.items %}-->
-    <!--<p>-->
-    <!--    <h2>날짜 : {{ date }}</h2>-->
-    <!--    {% for channel, movie in item.items %}-->
-    <!--        <h3>{{ channel }}</h3>-->
-    <!--        {% for hour, each_movie in movie.items %}-->
-    <!--            {% if each_movie %}-->
-    <!--                <div>{{ hour }}:{{ each_movie }}</div>-->
-    <!--            {% endif %}-->
+ <nav class="">
+  <div class="nav-wrapper row center">
+      <div class="row center">
+        <form class="form-inline" action="{% url 'watch:search_movie' %}" method="POST">
+            {% csrf_token %}
+            {% bootstrap_form form %}
+            {% buttons %}
+              <button class="btn btn-color btn-xs ml-1" type="submit">검색</button>
+            {% endbuttons %}
+        </form>
+      </div>
+  </div>
+</nav>
+<div id="app" data="{{ json_data }}">
+  <div class="container">
+    <!-- select option 채널 -->
+      
+    <form class="form-inline" action="{% url 'watch:search_schedule' %}" method="POST">
+      {% csrf_token %}
+      <label class="my-1 mr-2" for="inlineFormCustomSelectPref">편성표 보기</label>
+      <select v-model="selected" class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="channel_name">
+        <option selected>채널선택</option>
+        <option value="ocn">OCN</option>
+        <option value="cgv">Channel CGV</option>
+        <option value="super_action">Super Action</option>
+        <option value="스크린">Screen</option>
+      </select>
+        <button type="submit" class="btn btn-primary my-1">검색</button>
+    </form>
+    <!-- 편성표 -->
+    
+  <!--  <table v-show="true" class="table table-bordered table-hover">-->
+  <!--  <thead>-->
+  <!--    <tr>-->
+  <!--      <th scope="col">시간</th>-->
+  <!--      <th scope="col">[[ selected ]]</th>-->
+  <!--    </tr>-->
+  <!--  </thead>-->
+  <!--  <tbody>-->
+        <!--<tr v-for="date in search_schedules">-->
+        <!--  <th scope="row">[[ date ]]</th>-->
+            <!--<td v-for="channel in search_schedules.date">-->
+              <!--<a v-for="hour in search_schedules.date.channel" :href="" class="list-group list-group-flush list-group-item-action active">-->
+            <!--    <div>[[ hour ]] [[ search_schedules.date.channel.hour ]]</div>-->
+              <!--</a>-->
+  <!--          </td>-->
+  <!--      </tr>-->
+  <!--  </tbody>-->
+  <!--</table>-->
+  
+  <!--전체 편성표 -->
+  <!--  <table class="table table-bordered table-hover">-->
+  <!--  <thead>-->
+  <!--    <tr>-->
+  <!--      <th scope="col">시간</th>-->
+  <!--      <th scope="col">OCN</th>-->
+  <!--      <th scope="col">Channel CGV</th>-->
+  <!--      <th scope="col">SUPER ACTION</th>-->
+  <!--      <th scope="col">SCREEN</th>-->
+  <!--    </tr>-->
+  <!--  </thead>-->
+  <!--  <tbody>-->
+  <!--    {% for date, item in data.items %}-->
+  <!--      <tr>-->
+  <!--        <th scope="row">{{ date }}</th>-->
+  <!--        {% for channel, movies in item.items %}-->
+  <!--          <td v-if="selected">-->
+  <!--            {% for hour, each_movie in movies.items %}-->
+  <!--            <a href="{% url 'watch:go_to' each_movie %}" class="list-group list-group-flush list-group-item-action active">-->
+  <!--              <div>{{ hour }} {{ each_movie }}</div>-->
+  <!--            </a>-->
+  <!--          {% endfor %}-->
+  <!--          </td>-->
+  <!--        {% endfor %}-->
+  <!--      </tr>-->
+  <!--    {% endfor %}-->
+  <!--  </tbody>-->
+  <!--</table>-->
+    
+    <!--<div class="container">-->
+    <!--    {% for date, item in data.items %}-->
+    <!--    <p>-->
+    <!--      <h4>{{ date }}</h4>-->
+    <!--      {% for channel, movies in item.items %}-->
+    <!--        <h5>{{ channel }}</h5>-->
+    <!--        {% for hour, each_movie in movies.items %}-->
+    <!--          <a href="{% url 'watch:go_to' each_movie %}" class="list-group list-group-flush list-group-item-action active">-->
+    <!--            <div>{{ hour }} {{ each_movie }}</div>-->
+    <!--          </a>-->
     <!--        {% endfor %}-->
+    <!--      {% endfor %}-->
+    <!--    </p>-->
+    <!--    <br>-->
     <!--    {% endfor %}-->
-    <!--</p>-->
-    <!--{% endfor %}-->
-
+    <!--</div>-->
+  </div>
+</div>
+<script>
+  // const app = new Vue({
+  //   delimiters: ['[[', ']]'],
+  //   el: '#app',
+  //   data: {
+  //     'selected': '',
+  //     // 'submitted': true,
+  //     'schedules': {},
+  //     'search_schedules': {},
+  //     'dates': {},
+  //   },
+  //   methods: {
+  //     search_table: function (channel) {
+  //       axios.get(`/search_table/${channel}/`)
+  //         .then((response) => {
+  //           console.log(response)
+  //           return response.data
+  //         })
+  //         .then((data) => {
+  //           this.search_schedules = JSON.parse(data.search_schedules)
+  //         })
+  //       // this.submitted = true
+  //     }
+  //   },
+  //   beforeMount: function() {
+      // this.search_table({{ channel_name  }})
+      // this.search_table('ocn')
+      // this.schedules = JSON.parse(document.getElementById('app').getAttribute('data') || '{}')
+      // for (let schedule in this.schedules) {
+      //   console.log(schedule)
+      //   let already_judge = false
+      //   for (let in_value in this.dates) {
+      //     console.log(in_value)
+      //     if (in_value == schedule) {
+      //       already_judge = true
+      //     }
+      //   }
+      //   if (!already_judge) {
+      //     // this.dates[]
+      //   }
+      // }
+      // console.log(this.dates)
+      // console.log(this.schedules)
+    }
+  })
+</script>
 {% endblock %}

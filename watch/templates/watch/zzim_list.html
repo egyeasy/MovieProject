@@ -1,16 +1,90 @@
 {% extends 'base.html' %}
+{% load bootstrap4 %}
 {% load staticfiles %}
 
-{% block body %}
+<!--참고 : https://bootsnipp.com/snippets/KB2bD -->
+{% block head %}
+<!--<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">-->
+<!--<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>-->
+<!--<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>-->
+<!------ Include the above in your HEAD tag ---------->
+<link href="{% static 'css/zzim_list.css'%}" rel='stylesheet'>
+<link href="{% static 'css/search_bar.css'%}" rel='stylesheet'>
+{% endblock %}
 
-<div class="row">
-  {% for movie in movies %}
-  {{ movie.title }}
-    {% if movie in user.followers.all %}
-      <p><a class="btn btn-primary" href="{% url 'accounts:follow' movie.id %}">안볼래요</a></p>
-    {% else %}
-      <p><a class="btn btn-dark" href="{% url 'accounts:follow' movie.id %}">찜하기</a></p>
-    {% endif %}
-  {% endfor %} 
+{% block body %}
+<nav class="">
+  <div class="nav-wrapper row center">
+      <div class="row center">
+        <form class="form-inline" action="{% url 'watch:search_movie' %}" method="POST">
+            {% csrf_token %}
+            {% bootstrap_form form %}
+            {% buttons %}
+              <button class="btn btn-color btn-xs ml-1" type="submit">검색</button>
+            {% endbuttons %}
+        </form>
+      </div>
+  </div>
+</nav>
+<div class="container">
+  <div class="row justify-content-center">
+    <section class="content">
+      <h2 class="text-center">찜하기<i class="fas fa-check"></i></h2>
+    <div class="col-md-8 col-md-offset-2">
+      <div class="panel panel-default">
+        <div class="pannel-body">
+          <div class="table-container">
+          <table class="table table-filter">
+          <!--<table>-->
+            <tbody>
+              {% for movie in movies %}
+                  <tr data-status="pagado">
+                    <td>
+                      {% if movie in request.user.followers.all %}
+                        <a href="{% url 'accounts:follow' movie.id %}"><i class="fas fa-heart"></i></a>
+                      {% else %}
+                        <a href="{% url 'accounts:follow' movie.id %}"><i class="far fa-heart"></i></a>
+                      {% endif %}
+                    </td>
+                    <td>
+                      <img src="{{ movie.posterUrl }}" class="resize media-photo pull-left">
+                    </td>
+                    <td>
+                      <div class="media">
+                        <!--<div>-->
+                        <a href="{% url 'watch:movie_detail' movie.id %}">
+                          <!--media body때문에 오류났었음-->
+                        <!--<div class="media-body">-->
+                        <div>
+                          <span class="media-meta text-right">
+                          <!--<span class="pull-right">-->
+                            제작년도:{{movie.productionYear}}</span>
+                          <h5 class="title">{{movie.title}}</h5>
+                          <p class="summary">genre : {{movie.genre}} country : {{movie.country}} director : {{movie.director}}</p>
+                        </div>
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    </section>
+  </div>
 </div>
 {% endblock %}
+
+
+<!--<ul class="list-group list-group-flush col-md-8 col-md-offset-2">-->
+<!--    {% for movie in movies %}-->
+<!--    <li class="list-group-item">{{ movie.title }}</li>-->
+<!--    {% if movie in user.followers.all %}-->
+<!--      <a href="{% url 'accounts:follow' movie.id %}"><i class="fas fa-heart"></i></a>-->
+<!--    {% else %}-->
+<!--      <a href="{% url 'accounts:follow' movie.id %}"><i class="far fa-heart"></i></a>-->
+<!--    {% endif %}-->
+<!--  {% endfor %} -->

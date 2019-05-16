@@ -1,166 +1,127 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+{% load static %}
+{% load bootstrap4 %}
+{% block head %}
+    <link href="{% static 'css/index_schedule.css' %}" type="text/css" rel="stylesheet">
+    <style>
+      .header-text {
+        margin-top: 2%;
+        margin-bottom: 2%;
+      }
+      
+      .btn-color {
+        background-color: #26a69a;
+      }
+      
+      img.bg {
+        height: 80%;
+      }
+    </style>
+{% endblock %}
 
 {% block body %}
-
+  <nav class="">
+    <div class="nav-wrapper">
+      <a href="{% url 'watch:index' %}" class="center brand-logo logo-text">Knock Knock</a>
+    </div>
+  </nav>
   
-
   <div id="index-banner" class="parallax-container">
     <div class="section no-pad-bot">
       <div class="container">
         <br><br>
-        <h1 class="header center teal-text text-lighten-2">낙낙 KNOCK KNOCK</h1>
-        <div class="row center">
-          <h5 class="header col s12 light">보고 싶은 영화를 등록하고 알림을 받으세요!:D</h5>
-        </div>
-        <div>
-          <form action="" method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <input type="submit" />
-          </form>
+        <!--<h1 class="header center teal-text text-lighten-2">낙낙 KNOCK KNOCK</h1>-->
+        <div class="text-center">
+          <h4><i class="far fa-bell"></i></h4>
         </div>
         <div class="row center">
-            <form action="{% url 'watch:search_movie' %}" method="POST">
+          <h5 class="header col s12 light header-text">
+            보고 싶은 영화를 등록하고<br>알림을 받으세요.</h5>
+        </div>
+         <!--autocomplete search form-->
+        <div class="row center">
+          <form action="{% url 'watch:search_movie' %}" method="POST">
               {% csrf_token %}
-              <div class="input-field">
-                <input id="search" type="search" name="search" required>
-                <label class="label-icon" for="search"><i class="material-icons">search</i></label>
-                <i class="material-icons">close</i>
-              </div>
-            </form>
+              {% bootstrap_form form %}
+              {% buttons %}
+                <button class="btn btn-color" type="submit">검색</button>
+              {% endbuttons %}
+          </form>
+          
         </div>
-            <!-- <nav> -->
-                <!-- <div class="nav-wrapper"> -->
-                  
-                <!-- </div> -->
-              <!-- </nav> -->
         <br><br>
       </div>      
     </div>
-    <div class="parallax"><img src="{% static background_url %}" alt="movie scene"></div>
+    <div class="parallax"><img class="bg" src="{% static background_url %}" alt="movie scene"></div>
   </div>
-
-
+  
   <div class="container">
     <div class="section">
 
       <!--   Icon Section   -->
       <div class="row">
-        
         <!-- 로그인했을 때 찜한 목록 -->
-        <div class="col s12 m4">
+        <div class="col-12 s12 m4">
           <div class="icon-block">
-            <h2 class="center brown-text"><i class="material-icons">flash_on</i></h2>
-            {% if user.is_authenticated %}
-            <h5 class="center">찜한 영화</h5>
-              {% if zzim_ready %}
-                {% for zzim in zzim_ready %}
-                  {{zzim}}
-                {% endfor %}
-              {% else %}
-                <p class="light">아직 보고 싶은 영화를 등록하지 않았어요.
-                등록해서 알림 서비스를 받아보세요!:D</p>
-              {% endif %}
+            <h2 class="center brown-text"><i class="far fa-laugh-squint"></i></h2>
+            <h5 class="center">방영 예정 알리미</h5>
+            <!--<div class="mt-5 mb-5">-->
+	            <div class="row center"> 
+  			        
+    			        {% if zzim_ready %}
+      			        <ul class="timeline" style="width:100%">
+      			          {% for zzim in zzim_ready %}
+    				          <li>
+              					<p></p><a target="_blank" href="{% url 'watch:movie_detail' zzim.0.id %}">{{ zzim.0.title }}</a>
+              					{{zzim.2}}</p>
+              					<p>{{zzim.1}}</p>
+              				</li>
+              				{% endfor %}
+              			</ul>
+            			{% else %}
+                    <p class="light">아직 보고 싶은 영화를 등록하지 않았어요.
+                    등록해서 알림 서비스를 받아보세요 <i class="far fa-bell"></i></p>
+                  {% endif %}
+                <!--</div>-->
+          		</div>
+          	</div>
+          </div>
+          
+        <div class="col-12 s12 m4">
+          <div class="icon-block">
+            <h2 class="center brown-text"><i class="far fa-thumbs-up"></i></h2>
+            <h5 class="center">이 영화는 어떠세요?</h5>
+            <div class="center">
+              <a href="{% url 'watch:movie_detail' recommend_movie.id %}"><h5>{{ recommend_schedule.title }}</h5></a>
+              <h6>{{ recommend_schedule.channel }} {{ recommend_datetime }}</h6>
+            </div>
+              <a href="{% url 'watch:movie_detail' recommend_movie.id %}"><img class="rounded" src="{{ recommend_movie.posterUrl }}" alt="{{ recommend_movie.title }}" width="100%"></a>
             
-            {% else %}
-              <h5 class="center">낙낙(Knock Knock은요)</h5></h5>
-              <p class="light">We did most of the heavy lifting for you to provide a default stylings that incorporate our custom components. Additionally, we refined animations and transitions to provide a smoother experience for developers.</p>
-              </p>
-              <p>Get starated?</p>
-              <button type="button" href="{% url 'accounts:login' %}">로그인하기</button>
-            {% endif %}
           </div>
         </div>
 
-        <div class="col s12 m4">
+        <div class="col-12 s12 m4">
           <div class="icon-block">
-            <h2 class="center brown-text"><i class="material-icons">group</i></h2>
-            <h5 class="center">User Experience Focused</h5>
-
-            <p class="light">By utilizing elements and principles of Material Design, we were able to create a framework that incorporates components and animations that provide more feedback to users. Additionally, a single underlying responsive system across all platforms allow for a more unified user experience.</p>
-          </div>
-        </div>
-
-        <div class="col s12 m4">
-          <div class="icon-block">
-            <h2 class="center brown-text"><i class="material-icons">settings</i></h2>
-            <h5 class="center">Easy to work with</h5>
+            <h2 class="center brown-text"><i class="far fa-calendar-alt"></i></h2>
+            <h5 class="center">편성표</h5>
 
             <p class="light">We have provided detailed documentation as well as specific code examples to help new users get started. We are also always open to feedback and can answer any questions a user may have about Materialize.</p>
           </div>
         </div>
       </div>
 
+
+  
     </div>
-  </div>
-
-
-  <div class="parallax-container valign-wrapper">
-    <div class="section no-pad-bot">
-      <div class="container">
-        <div class="row center">
-          <h5 class="header col s12 light">A modern responsive front-end framework based on Material Design</h5>
-        </div>
-      </div>
-    </div>
-    <div class="parallax"><img src="" alt="Unsplashed background img 2"></div>
-  </div>
-
-  <div class="container">
-    <div class="section">
-
-      <div class="row">
-        <div class="col s12 center">
-          <h3><i class="mdi-content-send brown-text"></i></h3>
-          <h5 class="mb-4">이 영화는 어떠세요?</h5>
-          <a href="{% url 'watch:movie_detail' recommend_movie.id %}"><h5>{{ recommend_schedule.title }}</h5></a>
-          <h6>{{ recommend_schedule.channel }} {{ recommend_datetime }}</h6>
-          <a href="{% url 'watch:movie_detail' recommend_movie.id %}"><img class="rounded" src="{{ recommend_movie.posterUrl }}" alt="{{ recommend_movie.title }}" width="300"></a>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-
-  <div class="parallax-container valign-wrapper">
-    <div class="section no-pad-bot">
-      <div class="container">
-        <div class="row center">
-          <h5 class="header col s12 light">A modern responsive front-end framework based on Material Design</h5>
-        </div>
-      </div>
-    </div>
-    <div class="parallax"><img src="{{ background_url }}" alt="Unsplashed background img 3"></div>
   </div>
 
   <footer class="page-footer teal">
     <div class="container">
       <div class="row">
         <div class="col l6 s12">
-          <h5 class="white-text">Company Bio</h5>
-          <p class="grey-text text-lighten-4">We are a team of college students working on this project like it's our full time job. Any amount would help support and continue development on this project and is greatly appreciated.</p>
-
-
-        </div>
-        <div class="col l3 s12">
-          <h5 class="white-text">Settings</h5>
-          <ul>
-            <li><a class="white-text" href="#!">Link 1</a></li>
-            <li><a class="white-text" href="#!">Link 2</a></li>
-            <li><a class="white-text" href="#!">Link 3</a></li>
-            <li><a class="white-text" href="#!">Link 4</a></li>
-          </ul>
-        </div>
-        <div class="col l3 s12">
-          <h5 class="white-text">Connect</h5>
-          <ul>
-            <li><a class="white-text" href="#!">Link 1</a></li>
-            <li><a class="white-text" href="#!">Link 2</a></li>
-            <li><a class="white-text" href="#!">Link 3</a></li>
-            <li><a class="white-text" href="#!">Link 4</a></li>
-          </ul>
+          <h5 class="white-text">낙차팀 : 동영 & 소정</h5>
+          <p class="grey-text text-lighten-4">SSAFY에서 한 학기동안 web을 배우고 하는 첫 프로젝트 결과물입니다. 그동안 감사했습니다~:D</p>
         </div>
       </div>
     </div>
@@ -169,8 +130,6 @@
       Made by <a class="brown-text text-lighten-3" href="http://materializecss.com">Materialize</a>
       </div>
     </div>
-  </footer
-  <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
-  {{ form.media }}
+  </footer>
   
 {% endblock %}

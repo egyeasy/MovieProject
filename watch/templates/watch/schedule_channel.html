@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load static %}
+{% load bootstrap4 %}
+
+{% block head %}
+<link href="{% static 'css/search_bar.css'%}" rel='stylesheet'>
+<!-- Vue -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+{% endblock %}
+
+{% block body %} 
+ <nav class="">
+  <div class="nav-wrapper row center">
+      <div class="row center">
+        <form class="form-inline" action="{% url 'watch:search_movie' %}" method="POST">
+            {% csrf_token %}
+            {% bootstrap_form form %}
+            {% buttons %}
+              <button class="btn btn-color btn-xs ml-1" type="submit">검색</button>
+            {% endbuttons %}
+        </form>
+      </div>
+  </div>
+</nav>
+<div>
+  <div class="container">
+    <!-- select option 채널 -->
+    <form class="form-inline" action="{% url 'watch:search_schedule' %}" method="POST">
+      {% csrf_token %}
+      <label class="my-1 mr-2" for="inlineFormCustomSelectPref">편성표 보기</label>
+      <select v-model="selected" class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="channel_name">
+        <option selected>채널선택</option>
+        <option value="ocn">OCN</option>
+        <option value="cgv">Channel CGV</option>
+        <option value="super_action">Super Action</option>
+        <option value="스크린">Screen</option>
+      </select>
+      <button @click="search_table(selected)" class="btn btn-primary my-1">검색</button>
+    </form>
+    <!-- 편성표 -->
+<table class="table table-bordered table-hover">
+    <thead>
+      <tr>
+        <th scope="col">시간</th>
+        <th scope="col">{{ channel_name }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for date, item in search_schedules.items %}
+        <tr>
+          <th scope="row">{{ date }}</th>
+          {% for channel, movies in item.items %}
+            {% if channel == channel_name %}
+              <td>
+                {% for hour, each_movie in movies.items %}
+                <a href="{% url 'watch:go_to' each_movie %}" class="list-group list-group-flush list-group-item-action active">
+                  <div>{{ hour }} {{ each_movie }}</div>
+                </a>
+              {% endfor %}
+              </td>
+            {% endif %}
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+</div>
+{% endblock %}

@@ -45,4 +45,4 @@ def follow(request, movie_id):
         request.user.followers.remove(movie)
     else:
         request.user.followers.add(movie)
-    return redirect('watch:zzim_list', request.user.username)
+    return redirect('watch:zzim_list')

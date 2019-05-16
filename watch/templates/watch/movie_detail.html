@@ -1,10 +1,81 @@
 {% extends 'base.html' %}
+{% load staticfiles %}
+{% load bootstrap4 %}
+
+<!--참고 : https://bootsnipp.com/snippets/KB2bD -->
+{% block head %}
+<!--<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">-->
+<!--<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>-->
+<!--<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>-->
+<!------ Include the above in your HEAD tag ---------->
+<link href="{% static 'css/zzim_list.css'%}" rel='stylesheet'>
+<link href="{% static 'css/search_bar.css'%}" rel='stylesheet'>
+{% endblock %}
 
 {% block body %}
-<div class="container">
-    <h4>{{ movie.title }}</h4>
-    <img src="{{ movie.posterUrl }}" alt="{{ movie.title }} 포스터">
-    
+ <nav class="">
+  <div class="nav-wrapper row center">
+      <div class="row center">
+        <form class="form-inline" action="{% url 'watch:search_movie' %}" method="POST">
+            {% csrf_token %}
+            {% bootstrap_form form %}
+            {% buttons %}
+              <button class="btn btn-color btn-sm ml-1" type="submit">검색</button>
+            {% endbuttons %}
+        </form>
+      </div>
+  </div>
+</nav>
+<!-- Jumbotron -->
+<!--<div class="container">-->
+<div class="jumbotron">
+ 
+  <!-- Title -->
+  <div class="text-center">
+  <!--<h3 class="display-4">{{movie.title}}</h3>-->
+  <h4 class="card-title h2 pb-2 mb-3"><strong>{{movie.title}}</strong></h4>
+
+  <!-- Card image -->
+  <div class="view overlay my-4">
+    <img src="{{movie.posterUrl}}" class="img-fluid" alt="{{movie.title}}">
+  </div>
+  <h5 class="indigo-text h5 mb-4">제작년도:{{productionYear}}</h5>
+  </div>
+  <div class="container">
+  <div class="row">
+   <!--<div class="col-8 col-offset-2">-->
+   <div>
+    <p class="card-text">장르 : {{movie.genre}}</p>
+    <p class="card-text">제작국가 : {{movie.country}}</p>
+    <p class="card-text">상영시간 : {{movie.runningTime}}</p>
+    <p class="card-text">평점 : {{movie.score }}</p>
+    <p class="card-text">누적관객수 : {{movie.audience }}</p>
+    <p class="card-text"><i>줄거리 : </i> {{movie.content}}</p>
+    <p class="card-text">감독 : {{movie.director}}</p>
+    <p class="card-text">이 영화를 좋아하는 사람 : {{movie.follows.count}}</p>
+  </div>
+  </div>
+  </div>
+  <div class="container mb-5">
+  <i>코멘트를 남겨주세요</i>
+  <form method="POST" action="{% url 'watch:create_comment' movie.id %}">
+    {% csrf_token %}
+    {% bootstrap_form comment_form %}
+    {% buttons %}
+      <button type="submit" class="btn btn-primary">업로드</button>
+    {% endbuttons %}
+  </form>
+  
+  {% for comment in comments %}
+     <i class="fas fa-user-circle"><span class="text-primary" > {{ comment.created_by }}</span></i>
+     <p> - 평점 {{ comment.score }}점, {{ comment.content }}</p>
+     <hr>
+  {% endfor %}
+</div>
 </div>
 
+
+<!-- Jumbotron -->
+<!--</div>-->
+      
 {% endblock %}
