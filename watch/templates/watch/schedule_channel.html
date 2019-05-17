@@ -7,6 +7,11 @@
 <link href="{% static 'css/search_bar.css'%}" rel='stylesheet'>
 <!-- Vue -->
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<style>
+  .margin-bot {
+    margin-bottom: 100px !important;
+  }
+</style>
 {% endblock %}
 
 {% block body %} 
@@ -32,18 +37,25 @@
       <select v-model="selected" class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="channel_name">
         <option selected>채널선택</option>
         <option value="ocn">OCN</option>
-        <option value="cgv">Channel CGV</option>
+        <option value="cgv">채널 CGV</option>
         <option value="super_action">Super Action</option>
         <option value="스크린">Screen</option>
       </select>
-      <button @click="search_table(selected)" class="btn btn-primary my-1">검색</button>
+      <button class="btn btn-primary my-1">검색</button>
     </form>
     <!-- 편성표 -->
-<table class="table table-bordered table-hover">
+    {% if channel_name == 'cgv' %}
+      <h4 class="mx-auto">채널 CGV</h4>
+    {% elif channel_name == 'super_action' %}
+      <h4>Super Action</h4>
+    {% else %}
+      <h4 class="mx-auto">{{ channel_name }}</h4>
+    {% endif %}
+<table class="table table-bordered table-hover margin-bot">
     <thead>
       <tr>
         <th scope="col">시간</th>
-        <th scope="col">{{ channel_name }}</th>
+        <th scope="col">편성 내역</th>
       </tr>
     </thead>
     <tbody>

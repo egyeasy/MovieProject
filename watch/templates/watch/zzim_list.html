@@ -10,6 +10,11 @@
 <!------ Include the above in your HEAD tag ---------->
 <link href="{% static 'css/zzim_list.css'%}" rel='stylesheet'>
 <link href="{% static 'css/search_bar.css'%}" rel='stylesheet'>
+<style>
+  .margin-bot {
+    margin-bottom: 100px !important;
+  }
+</style>
 {% endblock %}
 
 {% block body %}
@@ -30,11 +35,11 @@
   <div class="row justify-content-center">
     <section class="content">
       <h2 class="text-center">찜하기<i class="fas fa-check"></i></h2>
-    <div class="col-md-8 col-md-offset-2">
+    <div class="col-md-8 col-md-offset-2 mx-auto">
       <div class="panel panel-default">
         <div class="pannel-body">
           <div class="table-container">
-          <table class="table table-filter">
+          <table class="table table-filter margin-bot">
           <!--<table>-->
             <tbody>
               {% for movie in movies %}

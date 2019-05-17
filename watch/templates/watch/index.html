@@ -17,6 +17,14 @@
       img.bg {
         height: 80%;
       }
+      
+      .margin-bot {
+        margin-bottom: 100px !important;
+      }
+      
+      .logo-telegram {
+        width: 20%;
+      }
     </style>
 {% endblock %}
 
@@ -41,7 +49,7 @@
         </div>
          <!--autocomplete search form-->
         <div class="row center">
-          <form action="{% url 'watch:search_movie' %}" method="POST">
+          <form class="mx-auto" action="{% url 'watch:search_movie' %}" method="POST">
               {% csrf_token %}
               {% bootstrap_form form %}
               {% buttons %}
@@ -80,7 +88,7 @@
               				{% endfor %}
               			</ul>
             			{% else %}
-                    <p class="light">아직 보고 싶은 영화를 등록하지 않았어요.
+                    <p class="light mx-auto">아직 보고 싶은 영화를 등록하지 않았어요.
                     등록해서 알림 서비스를 받아보세요 <i class="far fa-bell"></i></p>
                   {% endif %}
                 <!--</div>-->
@@ -88,7 +96,9 @@
           	</div>
           </div>
           
-        <div class="col-12 s12 m4">
+        
+        
+        <div class="col-12 s12 m4 margin-bot">
           <div class="icon-block">
             <h2 class="center brown-text"><i class="far fa-thumbs-up"></i></h2>
             <h5 class="center">이 영화는 어떠세요?</h5>
@@ -97,22 +107,19 @@
               <h6>{{ recommend_schedule.channel }} {{ recommend_datetime }}</h6>
             </div>
               <a href="{% url 'watch:movie_detail' recommend_movie.id %}"><img class="rounded" src="{{ recommend_movie.posterUrl }}" alt="{{ recommend_movie.title }}" width="100%"></a>
-            
           </div>
         </div>
-
-        <div class="col-12 s12 m4">
+        
+        <div class="col-12 s12 m4 margin-bot">
           <div class="icon-block">
-            <h2 class="center brown-text"><i class="far fa-calendar-alt"></i></h2>
-            <h5 class="center">편성표</h5>
-
-            <p class="light">We have provided detailed documentation as well as specific code examples to help new users get started. We are also always open to feedback and can answer any questions a user may have about Materialize.</p>
+            <h2 class="center brown-text"><img class="logo-telegram" src="{% static 'image/telegram.png' %}"></h2>
+            <h6 class="center">텔레그램에서도 낙낙을 만날 수 있습니다</h6>
+            <div class="center mt-4">
+              <a href="https://t.me/KnockAlarmBot" target="_blank"><h6>낙낙 챗봇</a> <i class="fas fa-comment-dots"></h6></i>
+            </div>
           </div>
         </div>
       </div>
-
-
-  
     </div>
   </div>
 

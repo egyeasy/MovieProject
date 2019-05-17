@@ -42,17 +42,17 @@
   
   {% block body %}
   {% endblock %}
-  
-  <nav class="white navbar-fixed-bottom navbar-mobile btn-group btn-group-justified fixed-bottom" role="group">
+  <!--white-->
+  <nav class=" navbar-fixed-bottom navbar-mobile btn-group btn-group-justified fixed-bottom" role="group" style="background-color:#26a69a">
     <div class="nav-wrapper container">
       <!-- <a id="logo-container" href="#" class="brand-logo">Logo</a> -->
 
       <!--  right hide-on-med-and-down -->
       <ul class="d-flex justify-content-around">
-        <li><a href="{% url 'watch:index' %}">홈</a></li>
-        <li><a href="{% url 'watch:schedule' %}">편성표</a></li>
-        <li><a href="{% url 'watch:zzim_list' %}">찜</a></li>
-        <li><a href="{% url 'watch:mypage' %}">마이페이지</a></li>
+        <li ><a href="{% url 'watch:index' %}" class="text-white">홈</a></li>
+        <li><a href="{% url 'watch:schedule' %}" class="text-white">편성표</a></li>
+        <li><a href="{% url 'watch:zzim_list' %}" class="text-white">찜</a></li>
+        <li><a href="{% url 'watch:mypage' %}" class="text-white">마이페이지</a></li>
       </ul>
 
       <!-- <ul id="nav-mobile" class="sidenav">

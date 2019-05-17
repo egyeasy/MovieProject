@@ -16,6 +16,9 @@
   .resize {
     width:10px;
   }
+  .margin-bot {
+    margin-bottom: 56px !important;
+  }
 </style>
 <link href="{% static 'css/search_bar.css'%}" rel='stylesheet'>
 {% endblock %}
@@ -36,7 +39,7 @@
 </nav>
 <!-- Jumbotron -->
 <!--<div class="container">-->
-<div class="jumbotron">
+<div class="jumbotron margin-bot">
  
   <!-- Title -->
   <div class="text-center">
@@ -51,9 +54,9 @@
 			
   
   
-  <div class="container">
-  <div class="row">
-		 <h4>{{request.user}}님의 찜 리스트</h4>
+  <div class="container center">
+  <div class="row text-center center">
+		 <h4 class="text-center mx-auto">{{request.user}}님의 찜 리스트</h4>
 <div style="width:100%">
   <div class="row justify-content-center">
     <section class="content">
@@ -102,9 +105,8 @@
   </div>
   </div>
   </div>
-  </div
-<button type="button" class="btn btn-outline-info mb-5" href="{% url 'accounts:logout' %}">로그아웃</button>
+  </div>
+<a href="{% url 'accounts:logout' %}">로그아웃</a>
 </div>
 </div>
- 
 {% endblock %}
